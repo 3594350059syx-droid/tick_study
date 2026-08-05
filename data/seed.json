@@ -1,0 +1,67 @@
+{
+  "tasks": [
+    {
+      "id": "gate-1",
+      "label": "GATE 1",
+      "description": "打开摄像头并显示画面",
+      "status": "warning",
+      "order": 1
+    },
+    {
+      "id": "gate-2",
+      "label": "GATE 2",
+      "description": "类的构造方法，重载和继承（6-19 错了四五次才对)",
+      "status": "failed",
+      "order": 2
+    },
+    {
+      "id": "gate-3",
+      "label": "GATE 3",
+      "description": "多态（可变参数，final,Object类里的toString(),equals(),hashCode())",
+      "status": "done",
+      "order": 3
+    },
+    {
+      "id": "gate-4",
+      "label": "GATE 4",
+      "description": "抽象类和接口+包",
+      "status": "warning",
+      "order": 4
+    },
+    {
+      "id": "gate-5",
+      "label": "GATE 5",
+      "description": "异常处理",
+      "status": "done",
+      "order": 5
+    },
+    {
+      "id": "gate-6",
+      "label": "GATE 6",
+      "description": "String,多线程，内部类",
+      "status": "done",
+      "order": 6
+    },
+    {
+      "id": "ext-1",
+      "label": "扩展 1",
+      "description": "",
+      "status": "pending",
+      "order": 7
+    },
+    {
+      "id": "ext-2",
+      "label": "扩展 2",
+      "description": "",
+      "status": "pending",
+      "order": 8
+    },
+    {
+      "id": "ext-3",
+      "label": "扩展 3",
+      "description": "",
+      "status": "pending",
+      "order": 9
+    }
+  ]
+}

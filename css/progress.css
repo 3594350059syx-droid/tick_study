@@ -1,0 +1,68 @@
+/* ==========================================
+   TickMemory — 动态进度条样式
+   ========================================== */
+
+#progress-container { width: min(100%, 520px); margin: 2rem 0 0; }
+
+/* ---- 百分比 + 计数 ---- */
+#progress-container > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+#progress-percent {
+  font-size: 2.7rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(135deg, var(--green), #4ade80);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all .4s var(--ease);
+}
+
+#progress-text { color: var(--dim); font-size: .95rem; font-variant-numeric: tabular-nums; }
+
+/* ---- 条形进度条 ---- */
+.progress-bar-wrapper {
+  height: 12px;
+  background: var(--surface3);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: .6rem 0;
+}
+
+#progress-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--yellow), var(--green), #4ade80);
+  background-size: 200% 100%;
+  border-radius: inherit;
+  transition: width .55s cubic-bezier(.25, .8, .25, 1.2);
+}
+
+#progress-fill.pulse { animation: shine .8s ease-out; }
+
+@keyframes shine {
+  0%   { filter: brightness(1); }
+  50%  { filter: brightness(1.6); box-shadow: 0 0 18px rgba(34, 197, 94, .6); }
+  100% { filter: brightness(1); }
+}
+
+/* ---- 块状进度条 ▓▓▓░░░ ---- */
+#progress-blockbar {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  letter-spacing: .2em;
+  color: var(--dim);
+  user-select: none;
+  line-height: 1;
+}
+
+/* ---- 完成状态 ---- */
+#progress-container.complete #progress-fill { box-shadow: 0 0 20px rgba(34, 197, 94, .4); }
+#progress-container.complete #progress-blockbar { color: var(--green); text-shadow: 0 0 8px rgba(34, 197, 94, .5); }
+

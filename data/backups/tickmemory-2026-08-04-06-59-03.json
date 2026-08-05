@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "gate-ms8dtj90-suug",
+      "label": "gate1",
+      "description": "打开摄像头并显示画面",
+      "status": "done",
+      "order": 1,
+      "createdAt": 1785468457909,
+      "updatedAt": 1785644260311,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8du9ed-3ms9",
+      "label": "gate2",
+      "description": "颜色空间转换",
+      "status": "done",
+      "order": 2,
+      "createdAt": 1785468491797,
+      "updatedAt": 1785648824820,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dv21j-m8ek",
+      "label": "gate3",
+      "description": "高斯模糊 + Canny 边缘检测",
+      "status": "done",
+      "order": 3,
+      "createdAt": 1785468528919,
+      "updatedAt": 1785655384668,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dvecv-sdss",
+      "label": "gate4",
+      "description": "组合成完整管道",
+      "status": "done",
+      "order": 4,
+      "createdAt": 1785468544879,
+      "updatedAt": 1785655455876,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dvulc-dfdb",
+      "label": "gate5",
+      "description": "复习发布者/订阅者",
+      "status": "warning",
+      "order": 5,
+      "createdAt": 1785468565920,
+      "updatedAt": 1785657397850,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dweoo-h5ke",
+      "label": "gate6",
+      "description": "安装并测试 cv_bridge",
+      "status": "failed",
+      "order": 6,
+      "createdAt": 1785468591960,
+      "updatedAt": 1785666455924,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dwrc0-jaqz",
+      "label": "gate7",
+      "description": "编写感知节点：订阅→处理→发布",
+      "status": "failed",
+      "order": 7,
+      "createdAt": 1785468608352,
+      "updatedAt": 1785826474294,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dx99g-t99k",
+      "label": "gate8",
+      "description": "逐行拆解 yolo_node.py",
+      "status": "pending",
+      "order": 8,
+      "createdAt": 1785468631588,
+      "updatedAt": 1785468631588,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dypy5-sj5h",
+      "label": "E1",
+      "description": "Parameters（参数）",
+      "status": "pending",
+      "order": 9,
+      "createdAt": 1785468699869,
+      "updatedAt": 1785468699869,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dz1ar-xqk0",
+      "label": "E2",
+      "description": "Launch 文件",
+      "status": "pending",
+      "order": 10,
+      "createdAt": 1785468714579,
+      "updatedAt": 1785468714579,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8e1ffs-icoq",
+      "label": "F1",
+      "description": "类与对象",
+      "status": "pending",
+      "order": 11,
+      "createdAt": 1785468826216,
+      "updatedAt": 1785468826216,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8e2pe1-6h6s",
+      "label": "English",
+      "description": "OpenCV 官方 Introduction",
+      "status": "pending",
+      "order": 12,
+      "createdAt": 1785468885769,
+      "updatedAt": 1785468885769,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8e42rm-4ijo",
+      "label": "看3Blue1Brown 线性代数的本质（B 站）",
+      "description": "",
+      "status": "pending",
+      "order": 13,
+      "createdAt": 1785468949762,
+      "updatedAt": 1785468949762,
+      "dayKey": "2026-08-02"
+    }
+  ]
+}

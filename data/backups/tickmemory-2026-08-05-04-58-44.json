@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "gate-ms8dtj90-suug",
+      "label": "gate1",
+      "description": "打开摄像头并显示画面",
+      "status": "done",
+      "order": 1,
+      "createdAt": 1785468457909,
+      "updatedAt": 1785644260311,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8du9ed-3ms9",
+      "label": "gate2",
+      "description": "颜色空间转换",
+      "status": "done",
+      "order": 2,
+      "createdAt": 1785468491797,
+      "updatedAt": 1785648824820,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dv21j-m8ek",
+      "label": "gate3",
+      "description": "高斯模糊 + Canny 边缘检测",
+      "status": "done",
+      "order": 3,
+      "createdAt": 1785468528919,
+      "updatedAt": 1785655384668,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dvecv-sdss",
+      "label": "gate4",
+      "description": "组合成完整管道",
+      "status": "done",
+      "order": 4,
+      "createdAt": 1785468544879,
+      "updatedAt": 1785655455876,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dvulc-dfdb",
+      "label": "gate5",
+      "description": "复习发布者/订阅者",
+      "status": "warning",
+      "order": 5,
+      "createdAt": 1785468565920,
+      "updatedAt": 1785657397850,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dweoo-h5ke",
+      "label": "gate6",
+      "description": "安装并测试 cv_bridge",
+      "status": "failed",
+      "order": 6,
+      "createdAt": 1785468591960,
+      "updatedAt": 1785666455924,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "gate-ms8dwrc0-jaqz",
+      "label": "gate7",
+      "description": "编写感知节点：订阅→处理→发布",
+      "status": "failed",
+      "order": 7,
+      "createdAt": 1785468608352,
+      "updatedAt": 1785826474294,
+      "dayKey": "2026-08-02"
+    },
+    {
+      "id": "task-1785905869891",
+      "label": "安装并测试cv_bridge",
+      "description": "",
+      "status": "done",
+      "dayKey": "2026-08-05",
+      "order": 1,
+      "createdAt": 1785905869891,
+      "updatedAt": 1785905871130
+    },
+    {
+      "id": "task-1785905893915",
+      "label": "Canny边缘检测",
+      "description": "",
+      "status": "warning",
+      "dayKey": "2026-08-05",
+      "order": 2,
+      "createdAt": 1785905893915,
+      "updatedAt": 1785905894651
+    }
+  ]
+}
