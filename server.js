@@ -4,6 +4,7 @@ const path = require('node:path');
 const { DatabaseSync } = require('node:sqlite');
 
 const ROOT = __dirname;
+const HOST = process.env.HOST || '127.0.0.1';
 const PORT = Number(process.env.PORT || 4173);
 const dbPath = path.join(ROOT, 'data', 'tickmemory.db');
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
@@ -20,7 +21,13 @@ function backupSnapshot(state, updatedAt) {
   while (all.length > 7) fs.unlinkSync(path.join(backupsDir, all.shift()));
 }
 function send(res, status, data, type = 'application/json; charset=utf-8') {
-  res.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store' });
+  res.writeHead(status, {
+    'Content-Type': type,
+    'Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Referrer-Policy': 'no-referrer',
+  });
   res.end(typeof data === 'string' ? data : JSON.stringify(data));
 }
 function readBody(req) {
@@ -32,14 +39,19 @@ function readBody(req) {
   });
 }
 http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
+  const url = new URL(req.url, 'http://localhost');
   try {
     if (url.pathname === '/api/state' && req.method === 'GET') {
       const row = db.prepare('SELECT payload, updated_at FROM app_state WHERE id = 1').get();
       return send(res, 200, { state: row ? JSON.parse(row.payload) : null, updatedAt: row?.updated_at || null });
     }
     if (url.pathname === '/api/state' && req.method === 'PUT') {
-      const state = JSON.parse(await readBody(req));
+      let state;
+      try {
+        state = JSON.parse(await readBody(req));
+      } catch (error) {
+        return send(res, error.message === 'Payload too large' ? 413 : 400, { error: 'Invalid JSON request body.' });
+      }
       if (!state || !Array.isArray(state.tasks)) return send(res, 400, { error: 'Invalid state: tasks must be an array.' });
       for (const t of state.tasks) {
         if (t.note == null) continue;
@@ -53,16 +65,34 @@ http.createServer(async (req, res) => {
       backupSnapshot(state, updatedAt);
       return send(res, 200, { ok: true, updatedAt });
     }
-    if (url.pathname === '/api/health') return send(res, 200, { ok: true, database: dbPath });
+    if (url.pathname === '/api/health' && (req.method === 'GET' || req.method === 'HEAD'))
+      return send(res, 200, { ok: true, database: 'available' });
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, { error: 'Method not allowed' });
-    const relative = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname).replace(/^[/\\]+/, '');
+    let relative;
+    try {
+      relative = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname).replace(/^[/\\]+/, '');
+    } catch {
+      return send(res, 400, 'Bad request', 'text/plain; charset=utf-8');
+    }
     const file = path.resolve(ROOT, relative);
-    if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return send(res, 404, 'Not found', 'text/plain; charset=utf-8');
-    res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream' });
+    const relativeFile = path.relative(ROOT, file);
+    const isPublicFile = relativeFile === 'index.html'
+      || relativeFile === 'data/seed.json'
+      || relativeFile.startsWith('css' + path.sep)
+      || relativeFile.startsWith('js' + path.sep);
+    if (!isPublicFile || relativeFile.startsWith('..' + path.sep) || path.isAbsolute(relativeFile)
+      || !fs.existsSync(file) || fs.statSync(file).isDirectory())
+      return send(res, 404, 'Not found', 'text/plain; charset=utf-8');
+    res.writeHead(200, {
+      'Content-Type': mime[path.extname(file)] || 'application/octet-stream',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN',
+      'Referrer-Policy': 'no-referrer',
+    });
     if (req.method === 'HEAD') return res.end();
     fs.createReadStream(file).pipe(res);
   } catch (error) {
     console.error(error);
     send(res, 500, { error: error.message || 'Server error' });
   }
-}).listen(PORT, () => console.log(`TickMemory is running at http://localhost:${PORT}`));
+}).listen(PORT, HOST, () => console.log(`TickMemory is running at http://${HOST}:${PORT}`));

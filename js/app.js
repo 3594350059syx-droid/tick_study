@@ -58,6 +58,8 @@ const App = (() => {
     data.tasks.forEach(t => { t.dayKey ||= today(); });
     saveLocal();
     bind();
+    initSidebar();
+    bindSidebarEvents();
     render();
   }
 
@@ -106,6 +108,9 @@ const App = (() => {
     $('task-summary').textContent = `${s.total} 项 · ${s.done} 项已掌握`;
     $('task-list').innerHTML = dayTasks().map(card).join('')
       || '<p class="task-empty">这一天还没有安排，添加一个任务开始吧。</p>';
+    
+    // 更新侧边栏
+    renderSidebar();
   }
 
   function card(t) {
@@ -395,6 +400,200 @@ const App = (() => {
       setSync('保存失败，数据仍在浏览器本地');
       toast('本地后端不可用', 'error');
     }
+  }
+
+  // —— 待处理任务侧边栏 ——
+  let sidebarCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+  let contextMenuTaskId = null;
+
+  function getWarningTasks() {
+    return data.tasks
+      .filter(t => t.status === 'warning')
+      .sort((a, b) => {
+        // 按日期排序，最新的在前
+        if (a.dayKey !== b.dayKey) return b.dayKey.localeCompare(a.dayKey);
+        return b.updatedAt - a.updatedAt;
+      });
+  }
+
+  function renderSidebar() {
+    const tasks = getWarningTasks();
+    const listEl = $('sidebar-list');
+    const countEl = $('sidebar-count');
+    
+    // 更新统计
+    countEl.textContent = tasks.length === 0 ? '暂无任务' : `${tasks.length} 个任务`;
+    
+    // 渲染列表
+    if (tasks.length === 0) {
+      listEl.innerHTML = '<div class="sidebar-empty">太棒了！<br>暂无待处理任务</div>';
+    } else {
+      listEl.innerHTML = tasks.map(t => `
+        <div class="sidebar-task" data-task-id="${t.id}">
+          <span class="sidebar-task-label">${esc(t.label)}</span>
+          <span class="sidebar-task-date">${fmtDate(t.dayKey)}</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+    const sidebar = $('warning-sidebar');
+    if (sidebarCollapsed) {
+      sidebar.classList.add('collapsed');
+      document.body.classList.add('sidebar-collapsed');
+    } else {
+      sidebar.classList.remove('collapsed');
+      document.body.classList.remove('sidebar-collapsed');
+    }
+    localStorage.setItem('sidebar_collapsed', sidebarCollapsed);
+  }
+
+  function initSidebar() {
+    const sidebar = $('warning-sidebar');
+    if (sidebarCollapsed) {
+      sidebar.classList.add('collapsed');
+      document.body.classList.add('sidebar-collapsed');
+    }
+    renderSidebar();
+  }
+
+  function jumpToDay(targetDay) {
+    if (!targetDay) return;
+    
+    const alreadyThere = (day === targetDay);
+    day = targetDay;
+    
+    // 确保每日面板展开
+    if (!open) {
+      open = true;
+      $('daily-panel').hidden = false;
+      $('btn-toggle-day').setAttribute('aria-expanded', 'true');
+    }
+    
+    // 刷新界面
+    render();
+    
+    // 显示提示
+    if (alreadyThere) {
+      toast('已定位到该任务所在日期');
+    } else {
+      toast(`已跳转至 ${fmtDate(targetDay)}`);
+    }
+    
+    // 平滑滚动到每日面板
+    setTimeout(() => {
+      $('daily-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  function showContextMenu(e, taskId) {
+    e.preventDefault();
+    const menu = $('context-menu');
+    contextMenuTaskId = taskId;
+    
+    // 定位菜单
+    menu.style.left = e.clientX + 'px';
+    menu.style.top = e.clientY + 'px';
+    menu.hidden = false;
+    
+    // 防止菜单超出屏幕
+    setTimeout(() => {
+      const rect = menu.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        menu.style.left = (window.innerWidth - rect.width - 10) + 'px';
+      }
+      if (rect.bottom > window.innerHeight) {
+        menu.style.top = (window.innerHeight - rect.height - 10) + 'px';
+      }
+    }, 0);
+  }
+
+  function hideContextMenu() {
+    $('context-menu').hidden = true;
+    contextMenuTaskId = null;
+  }
+
+  async function markTaskAsDone() {
+    if (!contextMenuTaskId) return;
+    
+    const task = findTask(contextMenuTaskId);
+    if (!task) {
+      hideContextMenu();
+      return;
+    }
+    
+    // 二次确认
+    if (!confirm(`确定将"${task.label}"标记为已掌握吗？`)) {
+      hideContextMenu();
+      return;
+    }
+    
+    // 更新状态
+    task.status = 'done';
+    task.updatedAt = Date.now();
+    saveLocal();
+    mutate();
+    
+    // 隐藏菜单
+    hideContextMenu();
+    
+    // 刷新界面
+    renderSidebar();
+    render();
+    
+    // 保存到数据库
+    try {
+      await persistState();
+      toast('✅ 任务已标记为已掌握');
+    } catch (e) {
+      setSync('保存失败，数据仍在浏览器本地');
+      toast('本地后端不可用', 'error');
+    }
+  }
+
+  function bindSidebarEvents() {
+    // 切换侧边栏
+    $('sidebar-toggle').addEventListener('click', toggleSidebar);
+    
+    // 任务列表左键点击 - 跳转到任务所在日期
+    $('sidebar-list').addEventListener('click', e => {
+      const taskEl = e.target.closest('.sidebar-task');
+      if (taskEl) {
+        const taskId = taskEl.dataset.taskId; // 直接使用字符串，不要 parseInt
+        const task = findTask(taskId);
+        if (task && task.dayKey) {
+          jumpToDay(task.dayKey);
+        }
+      }
+    });
+    
+    // 任务列表右键菜单
+    $('sidebar-list').addEventListener('contextmenu', e => {
+      const taskEl = e.target.closest('.sidebar-task');
+      if (taskEl) {
+        const taskId = taskEl.dataset.taskId; // 直接使用字符串，不要 parseInt
+        showContextMenu(e, taskId);
+      }
+    });
+    
+    // 右键菜单项点击
+    $('ctx-mark-done').addEventListener('click', markTaskAsDone);
+    
+    // 点击空白处关闭右键菜单
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#context-menu')) {
+        hideContextMenu();
+      }
+    });
+    
+    // ESC 键关闭右键菜单
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !$('context-menu').hidden) {
+        hideContextMenu();
+      }
+    });
   }
 
   return { init };

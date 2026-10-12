@@ -1,0 +1,28 @@
+# Dependencies and package-manager files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local runtime data (may contain private learning records and notes)
+data/*.db
+data/*.db-*
+data/backups/
+*.log
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary files
+*.swp
+*.swo
+*~
+tmp/
+temp/

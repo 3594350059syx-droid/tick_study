@@ -8,6 +8,33 @@
   <link rel="stylesheet" href="css/progress.css">
 </head>
 <body>
+  <!-- 待处理任务侧边栏 -->
+  <aside id="warning-sidebar" class="warning-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <span class="sidebar-icon">⚠️</span>
+        <b>待处理任务</b>
+      </div>
+      <button id="sidebar-toggle" class="sidebar-toggle" title="展开/收起" aria-label="切换侧边栏">
+        <span>◀</span>
+      </button>
+    </div>
+    <div class="sidebar-stats">
+      <span id="sidebar-count">0 个任务</span>
+    </div>
+    <div id="sidebar-list" class="sidebar-list">
+      <!-- 任务列表将在这里动态渲染 -->
+    </div>
+  </aside>
+
+  <!-- 右键菜单 -->
+  <div id="context-menu" class="context-menu" hidden>
+    <button id="ctx-mark-done" class="context-menu-item">
+      <span>✅</span>
+      <span>标记为已掌握</span>
+    </button>
+  </div>
+
   <main class="hero">
     <header class="app-header">
       <b class="brand">🧠 TickMemory</b>
